@@ -1,12 +1,22 @@
+
 package org.example;
+
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.properties.UnitValue;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 public class HistoriqueSoin extends JFrame {
 
     private JTable table;
+    private String[] columnNames = {"Date", "Type de soin", "Dentiste", "Coût"};
 
     public HistoriqueSoin() {
         setTitle("Historique de soins dentaires");
@@ -22,9 +32,6 @@ public class HistoriqueSoin extends JFrame {
                 {"09/02/2023", "Pose d'un implant dentaire", "Dr Maskoff", "1500 €"}
         };
 
-        // Noms de colonnes
-        String[] columnNames = {"Date", "Type de soin", "Dentiste", "Coût"};
-
         // Création du modèle de tableau
         DefaultTableModel model = new DefaultTableModel(data, columnNames);
 
@@ -36,6 +43,27 @@ public class HistoriqueSoin extends JFrame {
 
         // Ajout du JScrollPane dans la fenêtre
         add(scrollPane, BorderLayout.CENTER);
+
+        // Ajout du bouton facturation
+        JButton facturationButton = new JButton("Facturation");
+        facturationButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = table.getSelectedRow();
+                if (selectedRow != -1) {
+                    String[] rowData = new String[columnNames.length];
+                    for (int i = 0; i < columnNames.length; i++) {
+                        rowData[i] = table.getValueAt(selectedRow, i).toString();
+                    }
+                    generatePDF(rowData);
+                    JOptionPane.showMessageDialog(null, "Facture générée avec succès !");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Veuillez sélectionner une ligne.");
+                }
+            }
+        });
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        bottomPanel.add(facturationButton);
+        add(bottomPanel, BorderLayout.SOUTH);
 
         // Affichage de la fenêtre
         setSize(500, 300);
@@ -53,6 +81,38 @@ public class HistoriqueSoin extends JFrame {
                 }
             }
         });
+    }
+
+    private void generatePDF(String[] rowData) {
+        try {
+            String dest = "facture-" + rowData[0].replaceAll("/", "-") + ".pdf";
+            PdfWriter writer = new PdfWriter(dest);
+            PdfDocument pdf = new PdfDocument(writer);
+            Document document = new Document(pdf);
+
+            Paragraph title = new Paragraph("Facture");
+            title.setFontSize(20);
+            document.add(title);
+
+
+            Table pdfTable = new Table(UnitValue.createPercentArray(columnNames.length));
+            pdfTable.setWidth(UnitValue.createPercentValue(100));
+            for (String columnName : columnNames) {
+                pdfTable.addCell(columnName);
+            }
+
+            for (String cellData : rowData) {
+                pdfTable.addCell(cellData);
+            }
+
+            document.add(pdfTable);
+            document.close();
+
+            JOptionPane.showMessageDialog(null, "Facture générée avec succès dans le fichier : " + dest);
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Erreur lors de la génération de la facture.");
+        }
     }
 
     public static void main(String[] args) {

@@ -12,11 +12,11 @@ public class CarteDeVisite extends JFrame {
 
         JPanel panel = new JPanel();
 
-        JLabel infoLabel = new JLabel("<html><p><strong>Nom du Médecin :</strong> Vladimir Maskoff</p>" +
+        JLabel infoLabel = new JLabel("<html><p><strong>Nom du Médecin :</strong> Vladimir Maskoff.</p>" +
                 "<p><strong>Entreprise :</strong> App Dentaire.</p>" +
-                "<p><strong>Adresse :</strong> 2 Bis avenue Petit Fabron 06200 Nice</p>" +
-                "<p><strong>Ville :</strong> Nice, FR</p>" +
-                "<p><strong>Téléphone :</strong> 06-09-09-09-09</p>" +
+                "<p><strong>Adresse :</strong> 2 Bis avenue Petit Fabron 06200 Nice.</p>" +
+                "<p><strong>Ville :</strong> Nice, FR.</p>" +
+                "<p><strong>Téléphone :</strong> 06-09-09-09-09.</p>" +
                 "<p><strong>Email :</strong> appdentaire@info.fr</p></html>");
 
         panel.add(infoLabel);
